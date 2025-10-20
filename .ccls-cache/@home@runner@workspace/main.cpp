@@ -21,14 +21,6 @@ public:
   }
 };
 
-auto on_completion = [&terms]() noexcept {
-    double sum = 0.0;
-    for (Double term : terms) {
-        sum += term;
-    }
-    System.out.println(sum);
-};
-
 int main() {
   int precision = 0;
   std::cout << "Enter the precision (number of terms): ";
@@ -50,8 +42,8 @@ int main() {
   }
 
   double sum = 0.0;
-  for (double t : terms) {
-    sum += t;
+  for (int i = 0; i < terms.size(); i++) {
+    sum += terms[i];
   }
   std::cout << "Approximated value of pi: " << sum << std::endl;
 
