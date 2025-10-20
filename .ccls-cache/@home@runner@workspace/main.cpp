@@ -27,7 +27,15 @@ int main() {
   std::cin >> precision;
 
   std::vector<double> terms(precision);
-  std::barrier<> _barrier(precision);
+  double sum = 0.0;
+
+  // Define barrier with a completion function to sum the terms
+  std::barrier _barrier(precision, [&terms, &sum]() {
+    for (double term : terms) {
+      sum += term;
+    }
+    std::cout << "Approximated value of pi: " << sum << std::endl;
+  });
 
   std::vector<std::thread> threads;
   std::cout << "Calculating the value of pi with " << precision << " terms..."
@@ -40,12 +48,6 @@ int main() {
   for (auto &t : threads) {
     t.join();
   }
-
-  double sum = 0.0;
-  for (int i = 0; i < terms.size(); i++) {
-    sum += terms[i];
-  }
-  std::cout << "Approximated value of pi: " << sum << std::endl;
 
   return 0;
 }
