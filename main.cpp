@@ -21,6 +21,14 @@ public:
   }
 };
 
+auto on_completion = [&terms]() noexcept {
+    double sum = 0.0;
+    for (Double term : terms) {
+        sum += term;
+    }
+    System.out.println(sum);
+};
+
 int main() {
   int precision = 0;
   std::cout << "Enter the precision (number of terms): ";
