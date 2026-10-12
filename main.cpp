@@ -1,25 +1,14 @@
+/**
+ * @file    main.cpp
+ * @brief   Concurrent approximation of pi using the Leibniz series
+ */
+
 #include <barrier>
-#include <cmath>
 #include <iostream>
 #include <thread>
 #include <vector>
 
-class CalcThread {
-private:
-  int i;
-  std::vector<double> &terms;
-  std::barrier<> &_barrier;
-
-public:
-  CalcThread(int i, std::vector<double> &terms, std::barrier<> &barrier)
-      : i(i), terms(terms), _barrier(barrier) {}
-
-  void operator()() {
-    double term = 4 * pow(-1, i) / (2 * i + 1);
-    terms[i] = term;
-    _barrier.arrive_and_wait(); // Wait for all threads to compute
-  }
-};
+#include "calc_thread.h"
 
 int main() {
   int precision = 0;
@@ -29,25 +18,24 @@ int main() {
   std::vector<double> terms(precision);
   double sum = 0.0;
 
-  // Define barrier with a completion function to sum the terms
-  std::barrier _barrier(precision, [&terms, &sum]() {
-    for (double term : terms) {
-      sum += term;
-    }
-    std::cout << "Approximated value of pi: " << sum << std::endl;
-  });
+  std::barrier barrier(precision);
 
   std::vector<std::thread> threads;
   std::cout << "Calculating the value of pi with " << precision << " terms..."
             << std::endl;
 
   for (int i = 0; i < precision; i++) {
-    threads.emplace_back(CalcThread(i, terms, _barrier));
+    threads.emplace_back(CalcThread(i, terms, barrier));
   }
 
-  for (auto &t : threads) {
-    t.join();
+  for (std::thread &thread : threads) {
+    thread.join();
   }
+
+  for (double term : terms) {
+    sum += term;
+  }
+  std::cout << "Approximated value of pi: " << sum << std::endl;
 
   return 0;
 }
