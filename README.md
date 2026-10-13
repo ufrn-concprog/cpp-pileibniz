@@ -71,6 +71,8 @@ Run the program and enter the number of terms when prompted:
 ./bin/pileibniz
 ```
 
+Example of output:
+
 ```text
 Enter the precision (number of terms): 4000
 Calculating the value of pi with 4000 terms...
