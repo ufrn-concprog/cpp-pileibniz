@@ -80,6 +80,6 @@ Calculating the value of pi with 4000 terms...
 40.5067 milliseconds
 ```
 
-## ⚠️ Caveat
+### ⚠️ Caveat
 
-The computation of the approximation to $\pi$ with a large number of terms (threads) is likely to make the program fail due to excessive thread creation.
+Approximating $\pi$ with a large number of terms (threads) is likely to cause the program to fail due to excessive thread creation.
