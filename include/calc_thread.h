@@ -9,18 +9,18 @@
 #define CALC_THREAD_H
 
 #include <barrier>
-#include <vector>
-
 using std::barrier;
+
+#include "sum_aggregator.h"
+
+#include <vector>
 using std::vector;
 
 /**
  * @class   CalcThread
  * @brief   Computes one term of the Leibniz series and synchronizes with peers.
- * @details Each instance is intended to run in its own thread.
- *          It writes the term for its index into the corresponding element
- *          of the shared terms vector, then waits until all participating
- *          threads reach the barrier.
+ * @details Each worker writes its term at its assigned index, then waits at the
+ *          shared barrier.
  */
 class CalcThread {
 public:
@@ -28,12 +28,13 @@ public:
    * @brief Constructs a worker for one Leibniz-series term.
    * @param index Term index.
    * @param terms Shared output vector where the computed term will be stored.
-   * @param sync_barrier Synchronization barrier shared by all worker threads.
+   * @param sync_barrier Barrier shared by all worker threads.
    */
-  CalcThread(int index, vector<double> &terms, barrier<> &sync_barrier);
+  CalcThread(int index, vector<double> &terms,
+             barrier<SumAggregator> &sync_barrier);
 
   /**
-   * @brief Computes and stores this worker's term, then waits at the barrier.
+   * @brief Computes and stores the term, then waits at the shared barrier.
    */
   void operator()();
 
@@ -44,8 +45,8 @@ private:
   /** @brief Shared vector receiving the computed terms. */
   vector<double> &terms;
 
-  /** @brief Barrier used to synchronize the worker threads. */
-  barrier<> &sync_barrier;
+  /** @brief Barrier reached after this worker stores its term. */
+  barrier<SumAggregator> &sync_barrier;
 };
 
 #endif

@@ -6,25 +6,32 @@
  */
 
 #include <barrier>
-#include <iostream>
-#include <thread>
-#include <vector>
-
-#include "calc_thread.h"
-
 using std::barrier;
+
+#include <chrono>
+using std::chrono::high_resolution_clock;
+using std::chrono::duration;
+using std::milli;
+
+#include <iostream>
 using std::cin;
 using std::cout;
 using std::endl;
+
+#include <thread>
 using std::thread;
+
+#include <vector>
 using std::vector;
+
+#include "calc_thread.h"
+#include "sum_aggregator.h"
 
 /**
  * @brief   Reads the requested precision and computes an approximation of pi.
- * @details Creates one worker thread per Leibniz-series term.
- *          Each worker writes its term into a distinct vector element and
- *          waits at a barrier. The main thread sums the terms after all
- *          workers have completed.
+ * @details Creates one worker thread per Leibniz-series term. When all workers
+ *          reach the barrier, its completion action sums and prints the terms.
+ * @return Exit status code.
  */
 int main() {
   int precision = 0;
@@ -32,9 +39,9 @@ int main() {
   cin >> precision;
 
   vector<double> terms(precision);
-  double sum = 0.0;
+  barrier sync_barrier(precision, SumAggregator(terms));
 
-  barrier sync_barrier(precision);
+  auto start = high_resolution_clock::now();
 
   vector<thread> threads;
   cout << "Calculating the value of pi with " << precision << " terms..."
@@ -48,10 +55,9 @@ int main() {
     thread.join();
   }
 
-  for (double term : terms) {
-    sum += term;
-  }
-  cout << "Approximated value of pi: " << sum << endl;
+  auto end = high_resolution_clock::now();
+  double elapsed_milliseconds = duration<double, milli>(end - start).count();
+  cout << elapsed_milliseconds << " milliseconds" << endl;
 
   return 0;
 }
