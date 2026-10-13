@@ -50,3 +50,6 @@ cmake_install.cmake
 
 # Replit
 .replit
+
+# VSCode
+.vscode/
