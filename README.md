@@ -65,19 +65,7 @@ This creates the compiled object files in the `build/` directory and the `pileib
 
 ### ▶️ Running
 
-```bash
-printf "4000\n" | ./bin/pileibniz
-```
-
-Output example:
-
-```text
-Enter the precision (number of terms): Calculating the value of pi with 4000 terms...
-3.14307
-40.5067 milliseconds
-```
-
-Alternatively, run the program and enter the number of terms when prompted:
+Run the program and enter the number of terms when prompted:
 
 ```bash
 ./bin/pileibniz
